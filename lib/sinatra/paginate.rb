@@ -11,7 +11,7 @@ module Sinatra
       raise ArgumentError, 'resource should respond to :size'  unless resource.respond_to?(:size)
 
       options  = DEFAULTS.merge(options)
-      view     = options.fetch(:view, paginate_haml)
+      view     = options.fetch(:view) { paginate_haml }
       renderer = options.fetch(:renderer)
       send(renderer, view, layout: false, locals: paginate_options(resource, options))
     end
@@ -30,7 +30,7 @@ module Sinatra
     end
 
     def paginate_haml
-      @@haml ||= File.read(__FILE__).sub %r{^.*__END__}m, ''
+      @@haml ||= File.read(__FILE__, nil, encoding: 'UTF-8').sub %r{^.*__END__}m, ''
     end
 
     def page
